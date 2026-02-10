@@ -3,7 +3,6 @@ langgraph>=0.2.0
 langchain>=0.2.0
 langchain-core
 langchain-google-genai
-torch
 transformers>=4.45.0
 peft>=0.7.0
 accelerate>=0.25.0
@@ -11,3 +10,4 @@ huggingface_hub>=0.20.0
 fpdf2
 python-dotenv
 Pillow
+safetensors
