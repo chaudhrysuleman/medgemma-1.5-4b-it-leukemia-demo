@@ -7,7 +7,7 @@ import os
 import torch
 from PIL import Image
 from typing import Optional
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from pydantic import Field
 
 
@@ -33,7 +33,8 @@ class MedGemmaPredictor:
         from peft import PeftModel
         from huggingface_hub import login
         
-        token = hf_token or os.getenv("HF_TOKEN")
+        token = hf_token or os.getenv("HF_TOKEN", "")
+        token = token.strip()  # Remove trailing newline from Spaces secrets
         if token:
             login(token=token)
         
