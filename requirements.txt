@@ -1,3 +1,4 @@
+audioop-lts
 langgraph>=0.2.0
 langchain>=0.2.0
 langchain-core
