@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from typing import Optional
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 
 def get_report_llm():
