@@ -6,7 +6,7 @@ Provides clinical recommendations when leukemia is detected
 import os
 from typing import Optional
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 
 # Clinical knowledge base
