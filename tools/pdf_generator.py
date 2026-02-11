@@ -127,7 +127,6 @@ class LeukemiaReportPDF(FPDF):
     
     def add_text_block(self, text: str):
         """Add a block of text, handling markdown headers, bold, and lists"""
-        # Split into lines to process headers correctly even without double newlines
         lines = text.split('\n')
         
         for line in lines:
@@ -138,12 +137,12 @@ class LeukemiaReportPDF(FPDF):
             
             # Handle headers (# or ##)
             if stripped.startswith('#'):
-                # Render as bold sub-header
                 header_text = stripped.lstrip('#').strip()
                 self.ln(2)
+                self.set_x(self.l_margin)
                 self.set_font('Helvetica', 'B', 10)
                 self.set_text_color(30, 41, 59)
-                self.multi_cell(0, 6, self._safe(header_text))
+                self.multi_cell(w=190, h=6, text=self._safe(header_text))
                 self.set_font('Helvetica', '', 9)
                 self.set_text_color(51, 65, 85)
                 continue
@@ -151,39 +150,49 @@ class LeukemiaReportPDF(FPDF):
             # Handle bullet points
             if stripped.startswith(('- ', '* ', '• ')):
                 bullet_text = stripped.lstrip('-*• ').strip()
-                self._add_bullet_item(bullet_text)
+                clean = re.sub(r'\*\*(.*?)\*\*', r'\1', bullet_text)
+                self.set_x(self.l_margin)
+                self.set_font('Helvetica', '', 9)
+                self.set_text_color(51, 65, 85)
+                self.multi_cell(w=185, h=5, text=self._safe(f"  -  {clean[:300]}"))
+                self.ln(1)
                 continue
             
             # Handle numbered items
             if len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)':
                 item_text = stripped.lstrip('0123456789.) ').strip()
-                self._add_numbered_item(stripped[0], item_text)
+                clean = re.sub(r'\*\*(.*?)\*\*', r'\1', item_text)
+                num = stripped[0]
+                self.set_x(self.l_margin)
+                self.set_font('Helvetica', '', 9)
+                self.set_text_color(51, 65, 85)
+                self.multi_cell(w=185, h=5, text=self._safe(f"  {num}.  {clean[:300]}"))
+                self.ln(1)
                 continue
                 
             # Normal text line
+            self.set_x(self.l_margin)
             self.set_font('Helvetica', '', 9)
             self.set_text_color(51, 65, 85)
-            
-            # Clean markdown bold within line (e.g. **text**)
             clean = re.sub(r'\*\*(.*?)\*\*', r'\1', stripped)
-            self.multi_cell(0, 5, self._safe(clean))
+            self.multi_cell(w=190, h=5, text=self._safe(clean))
     
     def _add_bullet_item(self, text: str):
         """Add a single bullet item"""
-        # Use absolute indentation to avoid 'Not enough horizontal space' error
-        self.set_x(15)
         clean = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
-        self.cell(5, 5, '-')
-        self.multi_cell(0, 5, self._safe(clean[:300]))
+        self.set_x(self.l_margin)
+        self.set_font('Helvetica', '', 9)
+        self.set_text_color(51, 65, 85)
+        self.multi_cell(w=185, h=5, text=self._safe(f"  -  {clean[:300]}"))
         self.ln(1)
     
     def _add_numbered_item(self, number: str, text: str):
         """Add a numbered list item"""
-        # Use absolute indentation
-        self.set_x(15)
         clean = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
-        self.cell(8, 5, f"{number}.")
-        self.multi_cell(0, 5, self._safe(clean[:300]))
+        self.set_x(self.l_margin)
+        self.set_font('Helvetica', '', 9)
+        self.set_text_color(51, 65, 85)
+        self.multi_cell(w=185, h=5, text=self._safe(f"  {number}.  {clean[:300]}"))
         self.ln(1)
     
     def add_bullet_list(self, items: list):
@@ -260,96 +269,103 @@ def generate_pdf_report(
     Generate a professional PDF screening report.
     
     Returns:
-        Path to generated PDF
+        Path to generated PDF, or None if generation fails
     """
-    pdf = LeukemiaReportPDF()
-    pdf.add_page()
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    age = _calculate_age(patient_dob)
-    
-    # ── Patient Information ──
-    pdf.add_section_header("Patient Information")
-    pdf.add_field_row("Full Name", patient_name or "Not provided", "Patient ID", patient_id or "N/A")
-    pdf.add_field_row("Date of Birth", patient_dob or "Not provided", "Age", age)
-    pdf.add_field_row("Gender", patient_gender or "Not specified", "Report Date", timestamp)
-    
-    pdf.add_divider()
-    
-    # ── Classification Result ──
-    pdf.add_section_header("Classification Result")
-    pdf.add_result_banner(classification, confidence, severity)
-    
-    pdf.add_divider()
-    
-    
-    # ── Analysis Technology ──
-    # (Removed for conciseness)
-    
-    # ── Clinical Recommendations ──
-    
-    # ── Clinical Recommendations ──
-    if clinical_advice:
-        pdf.add_section_header("Clinical Recommendations")
+    try:
+        pdf = LeukemiaReportPDF()
+        pdf.add_page()
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        age = _calculate_age(patient_dob)
         
-        # Parse and render advice (handle both string and complex types)
-        advice_text = ""
-        if isinstance(clinical_advice, list):
-            parts = []
-            for item in clinical_advice:
-                if isinstance(item, dict) and 'text' in item:
-                    parts.append(item['text'])
-                elif isinstance(item, str):
-                    parts.append(item)
-            advice_text = "\n".join(parts)
-        elif isinstance(clinical_advice, dict):
-            advice_text = clinical_advice.get('text', str(clinical_advice))
-        else:
-            advice_text = str(clinical_advice)
-        
-        # Render full clinical advice — no truncation
-        pdf.add_text_block(advice_text)
+        # ── Patient Information ──
+        pdf.add_section_header("Patient Information")
+        pdf.add_field_row("Full Name", patient_name or "Not provided", "Patient ID", patient_id or "N/A")
+        pdf.add_field_row("Date of Birth", patient_dob or "Not provided", "Age", age)
+        pdf.add_field_row("Gender", patient_gender or "Not specified", "Report Date", timestamp)
         
         pdf.add_divider()
-    
-    # ── Recommended Next Steps ──
-    # Only show separate next steps if clinical advice didn't cover them (i.e. no clinical_advice provided)
-    elif next_steps:
-        pdf.add_section_header("Recommended Next Steps")
-        pdf.add_bullet_list(next_steps)
+        
+        # ── Classification Result ──
+        pdf.add_section_header("Classification Result")
+        pdf.add_result_banner(classification, confidence, severity)
+        
         pdf.add_divider()
-    
-    # ── Disclaimer ──
-    pdf.add_section_header("Important Disclaimer")
-    
-    # Warning box
-    y = pdf.get_y()
-    pdf.set_fill_color(254, 252, 232)
-    pdf.set_draw_color(253, 224, 71)
-    pdf.rect(10, y, 190, 38, style='DF')
-    
-    pdf.set_xy(14, y + 3)
-    pdf.set_font('Helvetica', 'B', 9)
-    pdf.set_text_color(161, 98, 7)
-    pdf.cell(0, 5, pdf._safe("WARNING: This report is for RESEARCH & EDUCATIONAL PURPOSES ONLY"), new_x='LMARGIN', new_y='NEXT')
-    
-    pdf.set_x(14)
-    pdf.set_font('Helvetica', '', 8)
-    pdf.set_text_color(133, 77, 14)
-    disclaimer_text = (
-        "This is NOT a medical diagnosis. This AI screening tool is a research prototype developed for "
-        "the MedGemma Impact Challenge 2026. Results must be confirmed through standard laboratory "
-        "procedures (CBC, bone marrow biopsy, flow cytometry) by a qualified haematologist or oncologist. "
-        "Do not make clinical decisions based solely on this report."
-    )
-    pdf.multi_cell(182, 4, pdf._safe(disclaimer_text))
-    
-    pdf.set_y(y + 42)
-    
-    # ── Generate output ──
-    if output_path is None:
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        safe_name = (patient_name or "anonymous").replace(" ", "_")[:20]
-        output_path = f"/tmp/leukemiascope_report_{safe_name}_{ts}.pdf"
-    
-    pdf.output(output_path)
-    return output_path
+        
+        
+        # ── Analysis Technology ──
+        # (Removed for conciseness)
+        
+        # ── Clinical Recommendations ──
+        
+        # ── Clinical Recommendations ──
+        if clinical_advice:
+            pdf.add_section_header("Clinical Recommendations")
+            
+            # Parse and render advice (handle both string and complex types)
+            advice_text = ""
+            if isinstance(clinical_advice, list):
+                parts = []
+                for item in clinical_advice:
+                    if isinstance(item, dict) and 'text' in item:
+                        parts.append(item['text'])
+                    elif isinstance(item, str):
+                        parts.append(item)
+                advice_text = "\n".join(parts)
+            elif isinstance(clinical_advice, dict):
+                advice_text = clinical_advice.get('text', str(clinical_advice))
+            else:
+                advice_text = str(clinical_advice)
+            
+            # Render full clinical advice — no truncation
+            pdf.add_text_block(advice_text)
+            
+            pdf.add_divider()
+        
+        # ── Recommended Next Steps ──
+        # Only show separate next steps if clinical advice didn't cover them (i.e. no clinical_advice provided)
+        elif next_steps:
+            pdf.add_section_header("Recommended Next Steps")
+            pdf.add_bullet_list(next_steps)
+            pdf.add_divider()
+        
+        # ── Disclaimer ──
+        pdf.add_section_header("Important Disclaimer")
+        
+        # Warning box
+        y = pdf.get_y()
+        pdf.set_fill_color(254, 252, 232)
+        pdf.set_draw_color(253, 224, 71)
+        pdf.rect(10, y, 190, 38, style='DF')
+        
+        pdf.set_xy(14, y + 3)
+        pdf.set_font('Helvetica', 'B', 9)
+        pdf.set_text_color(161, 98, 7)
+        pdf.cell(0, 5, pdf._safe("WARNING: This report is for RESEARCH & EDUCATIONAL PURPOSES ONLY"), new_x='LMARGIN', new_y='NEXT')
+        
+        pdf.set_x(14)
+        pdf.set_font('Helvetica', '', 8)
+        pdf.set_text_color(133, 77, 14)
+        disclaimer_text = (
+            "This is NOT a medical diagnosis. This AI screening tool is a research prototype developed for "
+            "the MedGemma Impact Challenge 2026. Results must be confirmed through standard laboratory "
+            "procedures (CBC, bone marrow biopsy, flow cytometry) by a qualified haematologist or oncologist. "
+            "Do not make clinical decisions based solely on this report."
+        )
+        pdf.multi_cell(182, 4, pdf._safe(disclaimer_text))
+        
+        pdf.set_y(y + 42)
+        
+        # ── Generate output ──
+        if output_path is None:
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            safe_name = (patient_name or "anonymous").replace(" ", "_")[:20]
+            output_path = f"/tmp/leukemiascope_report_{safe_name}_{ts}.pdf"
+        
+        pdf.output(output_path)
+        return output_path
+        
+    except Exception as e:
+        print(f"⚠️ PDF generation error: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
