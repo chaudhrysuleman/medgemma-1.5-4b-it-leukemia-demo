@@ -93,26 +93,17 @@ def generate_clinical_advice(
         return {
             "recommendations": (
                 "The AI screening model classified this blood cell image as **Normal** "
-                f"with {confidence:.1%} confidence. No abnormal lymphoblast morphology was detected.\n\n"
-                "**Clinical Interpretation:** The submitted peripheral blood smear image does not show "
-                "features consistent with Acute Lymphoblastic Leukemia (ALL). The cell morphology appears "
-                "within normal limits — round nucleus with mature chromatin pattern, adequate cytoplasm, "
-                "and no blast-like characteristics.\n\n"
-                "**Recommendations:**\n"
-                "• No immediate haematological intervention is indicated based on this screening.\n"
-                "• If the patient presents with clinical symptoms (persistent fatigue, unexplained bruising, "
-                "recurrent infections, bone pain, lymphadenopathy), a full CBC with manual differential "
-                "should still be performed regardless of this AI result.\n"
-                "• Routine follow-up as per standard clinical guidelines.\n\n"
-                "**Important:** A normal AI screening result does not constitute a definitive diagnosis. "
-                "Clinical correlation with patient symptoms, physical examination, and laboratory findings "
-                "is always required."
+                f"({confidence:.1%} confidence). No abnormal lymphoblast morphology was detected.\n\n"
+                "## Clinical Summary\n"
+                "The cell morphology appears within normal limits with no blast-like characteristics. "
+                "This is a screening result, not a clinical diagnosis.\n\n"
+                "## Recommended Actions\n"
+                "• No immediate haematological intervention in the absence of symptoms.\n"
+                "• Routine clinical follow-up as indicated."
             ),
             "next_steps": [
-                "Continue routine monitoring as clinically indicated",
-                "Perform CBC with manual differential if patient has symptoms",
-                "Document screening result in patient records",
-                "Schedule routine follow-up per clinical guidelines"
+                "Routine monitoring",
+                "CBC if symptoms present"
             ],
             "severity": "Low",
             "requires_urgent_action": False
@@ -127,58 +118,31 @@ def generate_clinical_advice(
     
     # Use LLM for detailed, personalized clinical advice
     prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are a senior clinical haematologist AI advisor providing detailed clinical 
-recommendations based on an AI blood cell screening result. You must provide thorough, 
-structured medical guidance.
-
+        ("system", """You are a senior clinical haematologist AI advisor providing a CONCISE clinical summary based on an AI blood cell screening result. 
+        
 Use this clinical knowledge base for reference:
 {knowledge}
 
 IMPORTANT GUIDELINES:
-- Be thorough and detailed — this report will be included in a medical screening document
-- Use professional medical terminology with explanations
-- Structure your response with clear sections using markdown headers (##)
-- Always emphasise this is AI-assisted screening, NOT a definitive diagnosis
-- Include specific diagnostic tests with clinical rationale for each
-- Provide actionable next steps with priority levels
-- Address urgency and timeline for follow-up
-- Consider the patient context if provided"""),
+- Be extremely CONCISE and direct.
+- Limit response to 2 key sections: "Clinical Summary" and "Recommended Actions".
+- Total response should be under 200 words.
+- Emphasise this is AI-assisted screening, NOT a definitive diagnosis.
+- Provide a bulleted list of prioritized next steps.
+- Do NOT include generic treatment protocols or patient communication advice unless critical."""),
         ("human", """Blood cell AI screening result:
 - Classification: {classification}
 - AI Confidence: {confidence:.1%}
 {patient_info}
 
-Please provide a comprehensive clinical advisory report with the following sections:
+Please provide a concise clinical report:
 
-## Clinical Interpretation
-Explain what the AI finding means clinically. Describe the morphological features that 
-suggest Acute Lymphoblastic Leukemia and the clinical significance.
+## Clinical Summary
+Briefly explain the finding (morphology & significance) in 2-3 sentences. Identify if this is a high-risk finding.
 
-## Severity Assessment
-Rate the urgency (High/Critical) and explain why immediate follow-up is necessary.
-
-## Recommended Diagnostic Workup
-List specific diagnostic tests in order of priority, with brief rationale for each:
-- Complete Blood Count (CBC) with manual differential
-- Peripheral blood smear review
-- Bone marrow aspiration and biopsy
-- Flow cytometry / immunophenotyping
-- Cytogenetic analysis
-- Molecular testing
-- Any additional tests as indicated
-
-## Treatment Considerations
-Briefly outline the treatment pathway if diagnosis is confirmed, including:
-- Initial management priorities
-- Standard treatment phases
-- Targeted therapies if applicable
-
-## Patient Communication
-Key points for communicating this screening result to the patient or their family, 
-emphasising the need for confirmatory testing and avoiding premature alarm.
-
-## Timeline & Urgency
-Provide specific timeline recommendations for diagnostic workup and specialist referral.""")
+## Recommended Actions
+List the top 3-5 most critical next steps (e.g., CBC, Smear Review, Referral) in order of urgency.
+""")
     ])
     
     patient_info = f"- Patient Context: {patient_context}" if patient_context else "- Patient Context: Not provided"
@@ -230,25 +194,22 @@ def _extract_next_steps(advice_text: str) -> list:
     default_steps = [
         "Urgent: Complete Blood Count (CBC) with manual differential",
         "Peripheral blood smear review by haematopathologist",
-        "Bone marrow aspiration and biopsy for definitive diagnosis",
-        "Flow cytometry / immunophenotyping (CD19, CD10, CD22, TdT)",
-        "Cytogenetic analysis (karyotype + FISH) for risk stratification",
-        "Molecular testing (BCR-ABL1, MLL rearrangements)",
-        "Refer to haematologist/oncologist within 24-48 hours",
-        "Baseline metabolic panel and coagulation studies"
+        "Bone marrow aspiration for definitive diagnosis",
+        "Flow cytometry / immunophenotyping",
+        "Refer to haematologist within 24-48 hours"
     ]
     
-    # Try parsing numbered items from the "Diagnostic Workup" section
+    # Try parsing numbered/bulleted items from the text
     steps = []
-    in_workup = False
+    in_actions = False
     for line in advice_text.split('\n'):
         stripped = line.strip()
-        if 'diagnostic workup' in stripped.lower() or 'recommended diagnostic' in stripped.lower():
-            in_workup = True
+        if 'recommended actions' in stripped.lower() or 'next steps' in stripped.lower():
+            in_actions = True
             continue
-        if in_workup and stripped.startswith('#'):
+        if in_actions and stripped.startswith('#'):
             break  # Next section
-        if in_workup and (stripped.startswith('-') or stripped.startswith('*') or 
+        if in_actions and (stripped.startswith('-') or stripped.startswith('*') or 
                           (len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)')):
             clean = stripped.lstrip('-*0123456789.) ').strip()
             if clean and len(clean) > 5:
@@ -258,73 +219,30 @@ def _extract_next_steps(advice_text: str) -> list:
 
 
 def _generate_fallback_advice(confidence: float, patient_context: Optional[str] = None) -> dict:
-    """Generate comprehensive clinical advice without LLM."""
+    """Generate concise clinical advice without LLM."""
     severity = "Critical" if confidence > 0.85 else "High"
     
     patient_note = ""
     if patient_context:
         patient_note = f"\n**Patient Context:** {patient_context}\n"
     
-    recommendations = f"""## Clinical Interpretation
-
-The AI screening model has identified morphological features consistent with **Acute Lymphoblastic Leukemia (ALL)** with **{confidence:.1%} confidence**. The analysed blood cell image shows characteristics suggestive of abnormal lymphoblast proliferation, including potential high nuclear-to-cytoplasm ratio and immature chromatin pattern.
+    recommendations = f"""## Clinical Summary
+The AI model identified features consistent with **Acute Lymphoblastic Leukemia (ALL)** ({confidence:.1%} confidence). Visual indicators suggest abnormal blast proliferation. **This is a screening result, not a confirmed diagnosis.** Immediate haematological evaluation is required to confirm.
 {patient_note}
-**Important:** This is an AI-assisted screening result, NOT a confirmed diagnosis. Definitive diagnosis requires comprehensive laboratory evaluation and expert haematopathological review.
 
-## Severity Assessment
-
-**Severity Level: {severity}**
-
-This finding requires **urgent clinical follow-up**. Acute Lymphoblastic Leukemia is a rapidly progressive malignancy. Early detection and prompt initiation of treatment are critical factors in patient outcomes. The AI model's confidence level of {confidence:.1%} warrants immediate escalation to the diagnostic pathway.
-
-## Recommended Diagnostic Workup
-
-The following tests should be performed in order of priority:
-
-1. **Complete Blood Count (CBC) with Manual Differential** — Assess total WBC count, identify blast percentage, evaluate for anaemia and thrombocytopenia
-2. **Peripheral Blood Smear Review** — Expert morphological assessment by haematopathologist to characterise blast cell features
-3. **Bone Marrow Aspiration & Biopsy** — Gold standard for ALL diagnosis; ≥20% blasts confirms diagnosis (WHO criteria)
-4. **Flow Cytometry / Immunophenotyping** — Distinguish B-ALL vs T-ALL; identify CD markers (CD19, CD10, CD22, TdT)
-5. **Cytogenetic Analysis (Karyotype + FISH)** — Identify prognostically significant translocations (t(12;21), t(9;22) Philadelphia chromosome)
-6. **Molecular Testing (PCR)** — BCR-ABL1 fusion, MLL rearrangements, iAMP21
-7. **Lumbar Puncture** — Assess CNS involvement (after bone marrow confirmation)
-8. **Baseline Metabolic Panel & Coagulation Studies** — Assess organ function and tumour lysis risk
-
-## Treatment Considerations
-
-If ALL is confirmed, the standard treatment pathway includes:
-- **Remission Induction** (4-6 weeks): Vincristine, corticosteroids, L-asparaginase ± anthracycline
-- **Consolidation / Intensification**: High-dose methotrexate, cytarabine
-- **CNS Prophylaxis**: Intrathecal methotrexate
-- **Maintenance Therapy** (2-3 years): Daily 6-mercaptopurine, weekly methotrexate
-- **Targeted Therapy** (if Ph+): Tyrosine kinase inhibitors (imatinib/dasatinib)
-
-## Patient Communication
-
-- Explain that the AI screening detected cells that require further evaluation
-- Emphasise that additional confirmatory tests are needed before any diagnosis
-- Avoid using definitive language — refer to it as a "screening finding" requiring investigation
-- Reassure that modern treatment protocols for ALL are highly effective, especially in children (85-90% cure rate)
-- Provide emotional support resources and clear next steps
-
-## Timeline & Urgency
-
-- **Within 24 hours**: CBC with differential and peripheral blood smear review
-- **Within 48-72 hours**: Haematologist/oncologist referral and bone marrow biopsy scheduling
-- **Within 1 week**: Complete diagnostic workup including flow cytometry and cytogenetics
-- **Ongoing**: Results review and treatment planning conference"""
+## Recommended Actions
+1. **Urgent CBC with Manual Differential** to assess blast count and cytopenias.
+2. **Peripheral Blood Smear Review** by a haematopathologist.
+3. **Bone Marrow Biopsy & Flow Cytometry** for definitive diagnosis.
+4. **Referral to Haematology/Oncology** within 24-48 hours."""
     
     return {
         "recommendations": recommendations,
         "next_steps": [
             "Urgent: Complete Blood Count (CBC) with manual differential",
             "Peripheral blood smear review by haematopathologist",
-            "Bone marrow aspiration and biopsy for definitive diagnosis",
-            "Flow cytometry / immunophenotyping (CD19, CD10, CD22, TdT)",
-            "Cytogenetic analysis (karyotype + FISH) for risk stratification",
-            "Molecular testing (BCR-ABL1, MLL rearrangements)",
-            "Refer to haematologist/oncologist within 24-48 hours",
-            "Baseline metabolic panel and coagulation studies"
+            "Bone marrow aspiration/biopsy & Flow Cytometry",
+            "Refer to haematologist within 24-48 hours"
         ],
         "severity": severity,
         "requires_urgent_action": True,

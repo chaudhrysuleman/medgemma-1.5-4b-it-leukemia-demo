@@ -280,19 +280,11 @@ def generate_pdf_report(
     
     pdf.add_divider()
     
-    # ── Analysis Technology ──
-    pdf.add_section_header("Analysis Technology")
-    pdf.add_info_table([
-        ("Analysis Method", "MedGemma 1.5 4B (Fine-tuned LoRA)"),
-        ("Model", "chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora"),
-        ("Workflow Engine", "LangGraph Multi-Agent Pipeline"),
-        ("Clinical Advisor", "Gemini 3 Flash Preview"),
-        ("Overall Accuracy", "78.15%"),
-        ("Leukemia Precision / Recall / F1", "83% / 83% / 83%"),
-        ("Normal Precision / Recall / F1", "68% / 69% / 69%"),
-    ])
     
-    pdf.add_divider()
+    # ── Analysis Technology ──
+    # (Removed for conciseness)
+    
+    # ── Clinical Recommendations ──
     
     # ── Clinical Recommendations ──
     if clinical_advice:
