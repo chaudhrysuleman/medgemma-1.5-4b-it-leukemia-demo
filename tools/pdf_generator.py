@@ -17,8 +17,8 @@ class LeukemiaReportPDF(FPDF):
         self.set_auto_page_break(auto=True, margin=20)
     
     def header(self):
-        # Red header bar
-        self.set_fill_color(220, 38, 38)
+        # Dark slate header bar
+        self.set_fill_color(30, 41, 59)
         self.rect(0, 0, 210, 32, style='F')
         
         # Title
@@ -28,7 +28,7 @@ class LeukemiaReportPDF(FPDF):
         self.cell(0, 10, 'LeukemiaScope', align='C', new_x='LMARGIN', new_y='NEXT')
         
         self.set_font('Helvetica', '', 10)
-        self.set_text_color(255, 220, 220)
+        self.set_text_color(180, 200, 220)
         self.cell(0, 6, 'AI-Powered Blood Cell Analysis Report', align='C', new_x='LMARGIN', new_y='NEXT')
         
         self.ln(12)
@@ -36,7 +36,7 @@ class LeukemiaReportPDF(FPDF):
     def footer(self):
         self.set_y(-20)
         # Divider line
-        self.set_draw_color(220, 38, 38)
+        self.set_draw_color(100, 116, 139)
         self.set_line_width(0.3)
         self.line(10, self.get_y(), 200, self.get_y())
         self.ln(3)
@@ -48,9 +48,9 @@ class LeukemiaReportPDF(FPDF):
     def add_section_header(self, title: str, icon: str = ""):
         """Add a professional section header with accent bar"""
         self.ln(4)
-        # Red accent bar
+        # Blue accent bar
         y = self.get_y()
-        self.set_fill_color(220, 38, 38)
+        self.set_fill_color(59, 130, 246)
         self.rect(10, y, 3, 8, style='F')
         
         self.set_font('Helvetica', 'B', 13)
