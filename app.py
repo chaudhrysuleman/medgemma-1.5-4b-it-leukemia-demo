@@ -309,7 +309,7 @@ with gr.Blocks(
             <div style="padding: 24px 30px; border-bottom: 1px solid #e2e8f0;">
                 <h2 style="margin: 0 0 16px; font-size: 20px; color: #1e293b;">📷 Supported Image Types</h2>
                 <p style="color: #475569; font-size: 14px; margin: 0 0 16px; line-height: 1.6;">
-                    The model was trained on the <strong>ALL-IDB</strong> (Acute Lymphoblastic Leukemia Image Database). 
+                    The model was trained on the <a href="https://www.kaggle.com/datasets/andrewmvd/leukemia-classification" target="_blank" style="color: #dc2626; text-decoration: underline; font-weight: 600;">Kaggle Leukemia Classification Dataset</a> (ALL-IDB). 
                     For best results, upload images similar to the examples below:
                 </p>
             </div>
