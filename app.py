@@ -190,6 +190,35 @@ custom_css = """
     border-radius: 10px;
     margin-bottom: 20px;
 }
+/* Dark mode: force all HTML content to keep readable text on their light backgrounds */
+.dark .ls-card {
+    color: #1e293b !important;
+}
+.dark .ls-card * {
+    color: inherit !important;
+}
+.dark .ls-card h1, .dark .ls-card h2,
+.dark .ls-card h3, .dark .ls-card h4 {
+    color: inherit !important;
+}
+.dark .ls-card code {
+    color: #1e40af !important;
+    background: rgba(0,0,0,0.06) !important;
+}
+/* Header stays white text */
+.dark .ls-header, .dark .ls-header * {
+    color: white !important;
+}
+/* Footer */
+.dark .ls-footer {
+    background: #1e293b !important;
+}
+.dark .ls-footer p {
+    color: #94a3b8 !important;
+}
+.dark .ls-footer code {
+    color: #60a5fa !important;
+}
 """
 
 
@@ -207,14 +236,14 @@ with gr.Blocks(
     # ==================== DISCLAIMER POPUP ====================
     with gr.Group(visible=True) as disclaimer_section:
         gr.HTML("""
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
-            <h1 style="margin: 0; font-size: 32px;">🩸 LeukemiaScope</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
+        <div class="ls-header" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 32px; color: white;">🩸 LeukemiaScope</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; color: white;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
         </div>
         """)
         
         gr.HTML("""
-        <div style="background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+        <div class="ls-card" style="background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #7f1d1d;">
             <h2 style="margin-top: 0; color: #dc2626; text-align: center;">⚠️ Important Disclaimer</h2>
             <ul style="color: #7f1d1d; line-height: 2; font-size: 15px; padding-left: 20px;">
                 <li>This tool is for <strong>research and educational purposes only</strong></li>
@@ -227,21 +256,21 @@ with gr.Blocks(
         """)
         
         gr.HTML("""
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+        <div class="ls-card" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #1e3a5f;">
             <h2 style="margin-top: 0; color: #1e40af;">🤖 How This App Works</h2>
             <p style="color: #1e3a5f; line-height: 1.6;">LeukemiaScope uses a <strong>multi-agent AI workflow</strong> powered by <strong>LangGraph</strong> to analyze blood cell images:</p>
             
             <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
+                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
                     <div style="color: #1e3a5f;"><strong>🔬 Image Analyzer Agent</strong> — Fine-tuned <code>MedGemma 1.5 4B</code> with LoRA adapter analyzes your blood cell microscopy image and classifies it as <strong>Normal</strong> or <strong>Leukemia</strong>.</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
+                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
                     <div style="color: #1e3a5f;"><strong>🩺 Clinical Advisor Agent</strong> — If leukemia is detected, <code>Gemini 3 Flash Preview</code> provides clinical recommendations, next steps, and risk assessment.</div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
+                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
                     <div style="color: #1e3a5f;"><strong>📋 Report Generator Agent</strong> — Generates a structured medical report with HTML view and downloadable PDF.</div>
                 </div>
             </div>
@@ -249,7 +278,7 @@ with gr.Blocks(
         """)
         
         gr.HTML("""
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+        <div class="ls-card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #14532d;">
             <h2 style="margin-top: 0; color: #166534;">📷 Image Requirements</h2>
             <p style="color: #14532d; line-height: 1.6;">For accurate results, please upload images that meet these criteria:</p>
             <ul style="color: #14532d; line-height: 2; font-size: 15px; padding-left: 20px;">
@@ -279,9 +308,9 @@ with gr.Blocks(
         
         # Header
         gr.HTML("""
-        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
-            <h1 style="margin: 0; font-size: 32px;">🩸 LeukemiaScope</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
+        <div class="ls-header" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 32px; color: white;">🩸 LeukemiaScope</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; color: white;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
         </div>
         """)
         
@@ -289,14 +318,14 @@ with gr.Blocks(
         gr.HTML("""
         <div style="display: flex; justify-content: center; margin-bottom: 20px;">
             <div style="display: flex; align-items: center;">
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #dc2626; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #dc2626; color: white !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
                 <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280 !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
                 <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280 !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
             </div>
         </div>
-        <div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px; font-size: 14px; color: #6b7280;">
+        <div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px; font-size: 14px; color: #9ca3af;">
             <span>Patient Info</span>
             <span>Image Upload</span>
             <span>Report</span>
@@ -356,13 +385,13 @@ with gr.Blocks(
     
     # Footer
     gr.HTML("""
-    <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 10px; text-align: center;">
+    <div class="ls-footer" style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 10px; text-align: center;">
         <p style="margin: 0; color: #64748b; font-size: 14px;">
-            Powered by <strong>LangGraph</strong> Multi-Agent Workflow | 
-            Model: <code>chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora</code>
+            Powered by <strong style="color: #64748b;">LangGraph</strong> Multi-Agent Workflow | 
+            Model: <code style="color: #3b82f6;">chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora</code>
         </p>
         <p style="margin: 10px 0 0 0; color: #94a3b8; font-size: 12px;">
-            Built for the MedGemma Impact Challenge 2026 | By Chaudhry Muhammad Suleman & Muhammad Idnan
+            Built for the MedGemma Impact Challenge 2026 | By Chaudhry Muhammad Suleman &amp; Muhammad Idnan
         </p>
     </div>
     """)

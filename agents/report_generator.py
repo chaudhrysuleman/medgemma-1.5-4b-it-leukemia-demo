@@ -73,7 +73,7 @@ def generate_report(
     
     # Build report with HTML styling for Gradio
     report = f"""
-<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto;">
+<div class="ls-card" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; color: #1e293b;">
 
 <!-- Header -->
 <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px 12px 0 0;">
