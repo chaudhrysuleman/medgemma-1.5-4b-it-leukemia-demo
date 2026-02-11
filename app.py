@@ -368,29 +368,22 @@ with gr.Blocks(
     # ==================== MAIN APP (hidden until disclaimer accepted) ====================
     with gr.Group(visible=False) as main_app:
         
-        # Header
+        # Compact header with inline progress
         gr.HTML("""
-        <div class="ls-header" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
-            <h1 style="margin: 0; font-size: 32px; color: white;">🩸 LeukemiaScope</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; color: white;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
-        </div>
-        """)
-        
-        # Progress indicator
-        gr.HTML("""
-        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center;">
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #dc2626; color: white !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
-                <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280 !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
-                <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280 !important; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+        <div class="ls-header" style="text-align: center; padding: 14px 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0; font-size: 22px; color: white;">🩸 LeukemiaScope</h2>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.95); color: #dc2626; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">1</div>
+                    <span style="color: rgba(255,255,255,0.7); font-size: 11px;">Patient</span>
+                    <div style="width: 24px; height: 2px; background: rgba(255,255,255,0.3);"></div>
+                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">2</div>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 11px;">Upload</span>
+                    <div style="width: 24px; height: 2px; background: rgba(255,255,255,0.3);"></div>
+                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">3</div>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 11px;">Report</span>
+                </div>
             </div>
-        </div>
-        <div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px; font-size: 14px; color: #9ca3af;">
-            <span>Patient Info</span>
-            <span>Image Upload</span>
-            <span>Report</span>
         </div>
         """)
         
