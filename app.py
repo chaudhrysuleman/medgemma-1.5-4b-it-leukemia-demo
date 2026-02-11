@@ -20,6 +20,47 @@ from tools.pdf_generator import generate_pdf_report
 current_patient = {}
 
 
+def get_progress_html(active_step=1):
+    """Generate progress bar HTML with the given step highlighted"""
+    def step_style(n):
+        if n == active_step:
+            return "background: rgba(255,255,255,0.95); color: #dc2626;"
+        elif n < active_step:
+            return "background: rgba(255,255,255,0.5); color: #dc2626;"
+        else:
+            return "background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);"
+    def label_style(n):
+        if n == active_step:
+            return "color: white; font-weight: 600;"
+        elif n < active_step:
+            return "color: rgba(255,255,255,0.7);"
+        else:
+            return "color: rgba(255,255,255,0.5);"
+    def line_style(n):
+        if n < active_step:
+            return "background: rgba(255,255,255,0.6);"
+        else:
+            return "background: rgba(255,255,255,0.3);"
+    labels = {1: "Patient Info", 2: "Upload Image", 3: "Report"}
+    return f"""
+    <div class="ls-header" style="text-align: center; padding: 14px 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 0;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <h2 style="margin: 0; font-size: 22px; color: white;">🩸 LeukemiaScope</h2>
+            <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 26px; height: 26px; border-radius: 50%; {step_style(1)} display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">1</div>
+                <span style="{label_style(1)} font-size: 11px;">{labels[1]}</span>
+                <div style="width: 24px; height: 2px; {line_style(1)}"></div>
+                <div style="width: 26px; height: 26px; border-radius: 50%; {step_style(2)} display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">2</div>
+                <span style="{label_style(2)} font-size: 11px;">{labels[2]}</span>
+                <div style="width: 24px; height: 2px; {line_style(2)}"></div>
+                <div style="width: 26px; height: 26px; border-radius: 50%; {step_style(3)} display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">3</div>
+                <span style="{label_style(3)} font-size: 11px;">{labels[3]}</span>
+            </div>
+        </div>
+    </div>
+    """
+
+
 def validate_patient_info(name, dob, gender):
     """Validate patient information before proceeding"""
     if not name or len(name.strip()) < 2:
@@ -37,7 +78,8 @@ def save_patient_info(name, dob, gender):
             gr.update(visible=True),
             gr.update(visible=False),
             gr.update(visible=False),
-            f"❌ {error_msg}"
+            f"❌ {error_msg}",
+            get_progress_html(1)
         )
     
     current_patient = {
@@ -51,7 +93,8 @@ def save_patient_info(name, dob, gender):
         gr.update(visible=False),
         gr.update(visible=True),
         gr.update(visible=False),
-        f"✅ Patient registered: {name}"
+        f"✅ Patient registered: {name}",
+        get_progress_html(2)
     )
 
 
@@ -61,6 +104,7 @@ def go_back_to_step1():
         gr.update(visible=True),
         gr.update(visible=False),
         gr.update(visible=False),
+        get_progress_html(1)
     )
 
 
@@ -75,7 +119,8 @@ def analyze_image_workflow(image):
             "❌ Please upload an image",
             "",
             "",
-            None
+            None,
+            get_progress_html(2)
         )
     
     # Convert to PIL if needed
@@ -144,7 +189,8 @@ def analyze_image_workflow(image):
             "✅ Analysis complete!",
             report,
             trace,
-            pdf_path
+            pdf_path,
+            get_progress_html(3)
         )
         
     except Exception as e:
@@ -156,7 +202,8 @@ def analyze_image_workflow(image):
             f"❌ Error: {str(e)}",
             "",
             "",
-            None
+            None,
+            get_progress_html(2)
         )
 
 
@@ -175,7 +222,8 @@ def start_new_analysis():
         None,
         "",
         "",
-        None
+        None,
+        get_progress_html(1)
     )
 
 
@@ -369,24 +417,8 @@ with gr.Blocks(
     # ==================== MAIN APP (hidden until disclaimer accepted) ====================
     with gr.Group(visible=False) as main_app:
         
-        # Compact header with inline progress
-        gr.HTML("""
-        <div class="ls-header" style="text-align: center; padding: 14px 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 0;">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <h2 style="margin: 0; font-size: 22px; color: white;">🩸 LeukemiaScope</h2>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.95); color: #dc2626; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">1</div>
-                    <span style="color: rgba(255,255,255,0.7); font-size: 11px;">Patient Info</span>
-                    <div style="width: 24px; height: 2px; background: rgba(255,255,255,0.3);"></div>
-                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">2</div>
-                    <span style="color: rgba(255,255,255,0.5); font-size: 11px;">Upload Image</span>
-                    <div style="width: 24px; height: 2px; background: rgba(255,255,255,0.3);"></div>
-                    <div style="width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">3</div>
-                    <span style="color: rgba(255,255,255,0.5); font-size: 11px;">Report</span>
-                </div>
-            </div>
-        </div>
-        """)
+        # Dynamic progress bar
+        progress_bar = gr.HTML(value=get_progress_html(1))
         
         status_msg = gr.Markdown("")
         
@@ -447,10 +479,10 @@ with gr.Blocks(
     accept_btn.click(accept_disclaimer, [], [disclaimer_section, main_app])
     
     # Step 1 -> Step 2
-    next_btn_1.click(save_patient_info, [patient_name, patient_dob, patient_gender], [step1, step2, step3, status_msg])
-    back_btn.click(go_back_to_step1, [], [step1, step2, step3])
-    analyze_btn.click(analyze_image_workflow, [image_input], [step2, step3, status_msg, report_output, trace_output, pdf_download])
-    new_analysis_btn.click(start_new_analysis, [], [step1, step2, step3, patient_name, patient_dob, patient_gender, image_input, report_output, trace_output, pdf_download])
+    next_btn_1.click(save_patient_info, [patient_name, patient_dob, patient_gender], [step1, step2, step3, status_msg, progress_bar])
+    back_btn.click(go_back_to_step1, [], [step1, step2, step3, progress_bar])
+    analyze_btn.click(analyze_image_workflow, [image_input], [step2, step3, status_msg, report_output, trace_output, pdf_download, progress_bar])
+    new_analysis_btn.click(start_new_analysis, [], [step1, step2, step3, patient_name, patient_dob, patient_gender, image_input, report_output, trace_output, pdf_download, progress_bar])
 
 
 # Pre-load model at startup
