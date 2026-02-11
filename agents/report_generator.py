@@ -230,24 +230,7 @@ def generate_report(
 </div>
 """
 
-    # Next Steps
-    if next_steps:
-        steps_html = ""
-        for i, step in enumerate(next_steps, 1):
-            clean_step = step.lstrip("0123456789. ")
-            steps_html += f"""
-        <div style="display: flex; align-items: flex-start; margin-bottom: 12px;">
-            <div style="background: #3b82f6; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">{i}</div>
-            <div style="margin-left: 12px; padding-top: 4px;">{clean_step}</div>
-        </div>
-"""
-        report += f"""
-<!-- Next Steps -->
-<div style="background: #eff6ff; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-    <h3 style="margin-top: 0; color: #1e40af;">📝 Recommended Next Steps</h3>
-    {steps_html}
-</div>
-"""
+
 
     # Disclaimer
     report += """
