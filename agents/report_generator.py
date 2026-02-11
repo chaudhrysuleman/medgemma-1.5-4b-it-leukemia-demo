@@ -140,8 +140,8 @@ def generate_report(
 </div>
 """
 
-    # Clinical Advice Section (if leukemia detected)
-    if classification == "Leukemia" and clinical_advice:
+    # Clinical Advice Section
+    if clinical_advice:
         # Sanitize clinical_advice — may be string, list, or dict
         if isinstance(clinical_advice, list):
             parts = []
@@ -156,15 +156,73 @@ def generate_report(
         else:
             advice_text = str(clinical_advice)
         
-        # Convert markdown to basic HTML
-        advice_html = advice_text.replace('\n\n', '</p><p style="color: #7f1d1d; line-height: 1.6;">')
-        advice_html = advice_html.replace('\n', '<br>')
+        # Convert markdown to proper HTML
+        import re
+        lines = advice_text.split('\n')
+        advice_html_parts = []
+        in_list = False
+        
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                if in_list:
+                    advice_html_parts.append('</ul>')
+                    in_list = False
+                advice_html_parts.append('<br>')
+                continue
+            
+            # Headers
+            if stripped.startswith('## '):
+                if in_list:
+                    advice_html_parts.append('</ul>')
+                    in_list = False
+                header = stripped.lstrip('#').strip()
+                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #991b1b; font-size: 15px;">{header}</h4>')
+            elif stripped.startswith('# '):
+                if in_list:
+                    advice_html_parts.append('</ul>')
+                    in_list = False
+                header = stripped.lstrip('#').strip()
+                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #991b1b; font-size: 16px; font-weight: 700;">{header}</h4>')
+            # Bullets
+            elif stripped.startswith(('- ', '* ', '• ')):
+                if not in_list:
+                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #7f1d1d; line-height: 1.8;">')
+                    in_list = True
+                item = stripped.lstrip('-*• ').strip()
+                # Bold
+                item = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', item)
+                advice_html_parts.append(f'<li>{item}</li>')
+            # Numbered items
+            elif len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)':
+                if not in_list:
+                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #7f1d1d; line-height: 1.8; list-style-type: decimal;">')
+                    in_list = True
+                item = stripped.lstrip('0123456789.) ').strip()
+                item = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', item)
+                advice_html_parts.append(f'<li>{item}</li>')
+            else:
+                if in_list:
+                    advice_html_parts.append('</ul>')
+                    in_list = False
+                # Bold
+                text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', stripped)
+                advice_html_parts.append(f'<p style="color: #7f1d1d; line-height: 1.6; margin: 4px 0;">{text}</p>')
+        
+        if in_list:
+            advice_html_parts.append('</ul>')
+        
+        advice_html = '\n'.join(advice_html_parts)
+        
+        advice_border = "#fecaca" if classification == "Leukemia" else "#bbf7d0"
+        advice_bg = "#fef2f2" if classification == "Leukemia" else "#f0fdf4"
+        advice_title_color = "#dc2626" if classification == "Leukemia" else "#166534"
         
         report += f"""
 <!-- Clinical Recommendations -->
-<div style="background: #fef2f2; padding: 20px; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 20px;">
-    <h3 style="margin-top: 0; color: #dc2626;">🩺 Clinical Recommendations</h3>
-    <p style="color: #7f1d1d; line-height: 1.6;">{advice_html}</p>
+<div style="background: {advice_bg}; padding: 20px; border: 1px solid {advice_border}; border-radius: 8px; margin-bottom: 20px;">
+    <h3 style="margin-top: 0; color: {advice_title_color};">🩺 Clinical Recommendations</h3>
+    {advice_html}
 </div>
 """
 

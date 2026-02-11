@@ -164,7 +164,9 @@ def analyze_image_workflow(image):
             classification=result.get("classification", "Unknown"),
             confidence=result.get("confidence", 0.0),
             clinical_advice=result.get("clinical_advice"),
-            next_steps=result.get("next_steps")
+            next_steps=result.get("next_steps"),
+            severity=result.get("severity"),
+            patient_gender=result.get("patient_gender")
         )
         
         # Workflow trace
