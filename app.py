@@ -493,16 +493,29 @@ with gr.Blocks(
         
         # Step 3: Results
         with gr.Group(visible=False) as step3:
-            gr.Markdown("## 📊 Step 3: Analysis Results")
+            gr.HTML("""
+            <div class="ls-card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 16px 20px; margin-bottom: 8px; color: #166534; text-align: center;">
+                <h3 style="margin: 0; font-size: 18px; color: #166534;">✅ Analysis Complete — Report Ready</h3>
+            </div>
+            """)
             
+            # Action buttons — prominent at top
             with gr.Row():
-                with gr.Column(scale=2):
-                    report_output = gr.HTML(label="Medical Report")
-                with gr.Column(scale=1):
-                    trace_output = gr.Markdown(label="Workflow Trace")
-                    gr.Markdown("### 📥 Download Report")
-                    pdf_download = gr.File(label="PDF Report", interactive=False)
-                    new_analysis_btn = gr.Button("🔄 New Analysis", variant="secondary", size="lg")
+                pdf_download = gr.File(label="📥 Download PDF Report", interactive=False)
+            with gr.Row():
+                new_analysis_btn = gr.Button("🔄 Start New Analysis", variant="primary", size="lg")
+            
+            # Workflow trace (collapsible)
+            with gr.Accordion("📡 Workflow Execution Trace", open=False):
+                trace_output = gr.Markdown(label="Workflow Trace")
+            
+            # Full-width report
+            gr.HTML("""
+            <div style="margin-top: 8px;">
+                <h3 style="margin: 0 0 8px; color: #1e293b; font-size: 16px;">📄 Full Medical Report</h3>
+            </div>
+            """)
+            report_output = gr.HTML(label="Medical Report")
         
         # Footer (inside main_app so it hides with disclaimer)
         gr.HTML("""
