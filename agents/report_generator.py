@@ -142,11 +142,29 @@ def generate_report(
 
     # Clinical Advice Section (if leukemia detected)
     if classification == "Leukemia" and clinical_advice:
+        # Sanitize clinical_advice — may be string, list, or dict
+        if isinstance(clinical_advice, list):
+            parts = []
+            for item in clinical_advice:
+                if isinstance(item, dict) and 'text' in item:
+                    parts.append(item['text'])
+                elif isinstance(item, str):
+                    parts.append(item)
+            advice_text = "\n".join(parts)
+        elif isinstance(clinical_advice, dict):
+            advice_text = clinical_advice.get('text', str(clinical_advice))
+        else:
+            advice_text = str(clinical_advice)
+        
+        # Convert markdown to basic HTML
+        advice_html = advice_text.replace('\n\n', '</p><p style="color: #7f1d1d; line-height: 1.6;">')
+        advice_html = advice_html.replace('\n', '<br>')
+        
         report += f"""
 <!-- Clinical Recommendations -->
 <div style="background: #fef2f2; padding: 20px; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 20px;">
     <h3 style="margin-top: 0; color: #dc2626;">🩺 Clinical Recommendations</h3>
-    <p style="color: #7f1d1d; line-height: 1.6;">{clinical_advice}</p>
+    <p style="color: #7f1d1d; line-height: 1.6;">{advice_html}</p>
 </div>
 """
 

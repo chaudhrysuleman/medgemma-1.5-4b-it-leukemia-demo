@@ -131,8 +131,22 @@ Provide:
         )
     )
     
+    # Extract text - response.content may be a string or list of content blocks
+    content = response.content
+    if isinstance(content, list):
+        # Gemini returns [{'type': 'text', 'text': '...'}]
+        text_parts = []
+        for part in content:
+            if isinstance(part, dict) and 'text' in part:
+                text_parts.append(part['text'])
+            elif isinstance(part, str):
+                text_parts.append(part)
+        advice_text = "\n".join(text_parts)
+    else:
+        advice_text = str(content)
+    
     return {
-        "recommendations": response.content,
+        "recommendations": advice_text,
         "next_steps": [
             "Complete Blood Count (CBC)",
             "Bone marrow biopsy",
