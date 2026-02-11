@@ -455,7 +455,17 @@ with gr.Blocks(
                     patient_dob = gr.Textbox(label="Date of Birth", placeholder="YYYY-MM-DD", max_lines=1)
                     patient_gender = gr.Dropdown(label="Gender", choices=["Not specified", "Male", "Female", "Other"], value="Not specified")
             
-            next_btn_1 = gr.Button("Continue to Image Upload →", variant="primary", size="lg")
+            gr.HTML("""
+            <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 14px 16px; margin: 12px 0 4px;">
+                <p style="margin: 0; color: #0369a1; font-size: 13px; line-height: 1.6;">
+                    🔒 <strong>Privacy Notice:</strong> Your personal information is used solely to generate this screening report. 
+                    <strong>No data is stored, retained, or shared</strong> — all information is discarded after the session ends.
+                </p>
+            </div>
+            """)
+            privacy_consent = gr.Checkbox(label="I acknowledge that my information will not be stored and consent to proceed.", value=False)
+            
+            next_btn_1 = gr.Button("Continue to Image Upload →", variant="primary", size="lg", interactive=False)
         
         # Step 2: Image Upload
         with gr.Group(visible=False) as step2:
@@ -536,6 +546,13 @@ with gr.Blocks(
     
     # Disclaimer accept
     accept_btn.click(accept_disclaimer, [], [disclaimer_section, main_app])
+    
+    # Privacy consent toggles Continue button
+    privacy_consent.change(
+        fn=lambda checked: gr.update(interactive=checked),
+        inputs=[privacy_consent],
+        outputs=[next_btn_1]
+    )
     
     # Step 1 -> Step 2
     next_btn_1.click(save_patient_info, [patient_name, patient_dob, patient_gender], [step1, step2, step3, status_msg, progress_bar])
