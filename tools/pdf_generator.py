@@ -82,7 +82,7 @@ class LeukemiaReportPDF(FPDF):
             bg_r, bg_g, bg_b = 34, 197, 94
             label = "NORMAL — No Abnormality Detected"
         elif classification == "Leukemia":
-            bg_r, bg_g, bg_b = 220, 38, 38
+            bg_r, bg_g, bg_b = 180, 83, 9
             label = "LEUKEMIA DETECTED — Abnormal Blast Cells Identified"
         else:
             bg_r, bg_g, bg_b = 234, 179, 8

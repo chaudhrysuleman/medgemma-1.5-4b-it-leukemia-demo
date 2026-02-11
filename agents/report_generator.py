@@ -64,7 +64,7 @@ def generate_report(
         status_emoji = "⚠️"
         status_text = "LEUKEMIA DETECTED"
         alert_class = "leukemia"
-        alert_color = "#ef4444"
+        alert_color = "#b45309"
     else:
         status_emoji = "🔍"
         status_text = "UNCERTAIN"
@@ -134,11 +134,11 @@ def generate_report(
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 12px 0; color: #64748b;">Leukemia Precision / Recall / F1</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>83% / 83% / 83%</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><strong>83%</strong></td>
         </tr>
         <tr>
             <td style="padding: 12px 0; color: #64748b;">Normal Precision / Recall / F1</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>68% / 69% / 69%</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><strong>68%</strong></td>
         </tr>
     </table>
 </div>
