@@ -236,69 +236,131 @@ with gr.Blocks(
     # ==================== DISCLAIMER POPUP ====================
     with gr.Group(visible=True) as disclaimer_section:
         gr.HTML("""
-        <div class="ls-header" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
-            <h1 style="margin: 0; font-size: 32px; color: white;">🩸 LeukemiaScope</h1>
-            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; color: white;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
-        </div>
-        """)
-        
-        gr.HTML("""
-        <div class="ls-card" style="background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #7f1d1d;">
-            <h2 style="margin-top: 0; color: #dc2626; text-align: center;">⚠️ Important Disclaimer</h2>
-            <ul style="color: #7f1d1d; line-height: 2; font-size: 15px; padding-left: 20px;">
-                <li>This tool is for <strong>research and educational purposes only</strong></li>
-                <li>This is <strong>NOT a certified medical diagnostic tool</strong></li>
-                <li>Results must be confirmed by qualified healthcare professionals</li>
-                <li><strong>Do NOT</strong> make any treatment decisions based solely on this tool's output</li>
-                <li>Always consult a hematologist or oncologist for definitive diagnosis</li>
-            </ul>
-        </div>
-        """)
-        
-        gr.HTML("""
-        <div class="ls-card" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #1e3a5f;">
-            <h2 style="margin-top: 0; color: #1e40af;">🤖 How This App Works</h2>
-            <p style="color: #1e3a5f; line-height: 1.6;">LeukemiaScope uses a <strong>multi-agent AI workflow</strong> powered by <strong>LangGraph</strong> to analyze blood cell images:</p>
+        <div class="ls-card" style="background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); margin-bottom: 24px; color: #1e293b;">
             
-            <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
-                    <div style="color: #1e3a5f;"><strong>🔬 Image Analyzer Agent</strong> — Fine-tuned <code>MedGemma 1.5 4B</code> with LoRA adapter analyzes your blood cell microscopy image and classifies it as <strong>Normal</strong> or <strong>Leukemia</strong>.</div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
-                    <div style="color: #1e3a5f;"><strong>🩺 Clinical Advisor Agent</strong> — If leukemia is detected, <code>Gemini 3 Flash Preview</code> provides clinical recommendations, next steps, and risk assessment.</div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="background: #3b82f6; color: white !important; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
-                    <div style="color: #1e3a5f;"><strong>📋 Report Generator Agent</strong> — Generates a structured medical report with HTML view and downloadable PDF.</div>
+            <!-- Hero Header -->
+            <div class="ls-header" style="text-align: center; padding: 40px 30px 30px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #7f1d1d 100%); color: white; position: relative;">
+                <div style="font-size: 48px; margin-bottom: 8px;">🩸</div>
+                <h1 style="margin: 0; font-size: 36px; font-weight: 700; color: white; letter-spacing: -0.5px;">LeukemiaScope</h1>
+                <p style="margin: 8px 0 0; font-size: 16px; color: rgba(255,255,255,0.9); font-weight: 300;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
+                <div style="margin-top: 16px; display: inline-flex; gap: 12px;">
+                    <span style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 12px; color: white; backdrop-filter: blur(4px);">MedGemma 1.5 4B</span>
+                    <span style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 12px; color: white; backdrop-filter: blur(4px);">LangGraph Agents</span>
+                    <span style="background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; font-size: 12px; color: white; backdrop-filter: blur(4px);">Gemini 3 Flash</span>
                 </div>
             </div>
-        </div>
-        """)
-        
-        gr.HTML("""
-        <div class="ls-card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 25px; margin-bottom: 20px; color: #14532d;">
-            <h2 style="margin-top: 0; color: #166534;">📷 Image Requirements</h2>
-            <p style="color: #14532d; line-height: 1.6;">For accurate results, please upload images that meet these criteria:</p>
-            <ul style="color: #14532d; line-height: 2; font-size: 15px; padding-left: 20px;">
-                <li><strong>Blood cell microscopy image</strong> — standard blood smear slides</li>
-                <li><strong>Dark/black background</strong> — single cell or few cells visible</li>
-                <li><strong>Stained samples preferred</strong> — Wright or Giemsa stain</li>
-                <li><strong>Clear, focused image</strong> — avoid blurry or low-resolution images</li>
-                <li><strong>RGB format</strong> — JPEG, PNG, or similar formats</li>
-            </ul>
-            <div style="background: #dcfce7; padding: 12px; border-radius: 8px; margin-top: 10px;">
-                <p style="margin: 0; color: #166534; font-size: 14px;">
-                    💡 <strong>Tip:</strong> The model was trained on ALL-IDB (Acute Lymphoblastic Leukemia Image Database) style images — 
-                    single blood cell crops with dark backgrounds work best.
+            
+            <!-- Medical Disclaimer -->
+            <div style="padding: 24px 30px; background: #fef2f2; border-bottom: 1px solid #fecaca;">
+                <div style="display: flex; align-items: flex-start; gap: 14px;">
+                    <div style="font-size: 28px; flex-shrink: 0; margin-top: 2px;">⚕️</div>
+                    <div>
+                        <h2 style="margin: 0 0 10px; font-size: 20px; color: #991b1b;">Medical Disclaimer</h2>
+                        <p style="margin: 0 0 8px; color: #7f1d1d; line-height: 1.7; font-size: 14px;">
+                            LeukemiaScope is an <strong>AI research prototype</strong> developed for the MedGemma Impact Challenge 2026. 
+                            It is designed to <strong>assist — not replace</strong> — trained medical professionals in screening blood cell images for signs of Acute Lymphoblastic Leukemia (ALL).
+                        </p>
+                        <div style="background: #fee2e2; border-radius: 8px; padding: 12px 16px; margin-top: 8px;">
+                            <p style="margin: 0; color: #991b1b; font-size: 13px; line-height: 1.6;">
+                                <strong>⚠️ This is NOT a certified medical device.</strong> All results require confirmation through standard laboratory procedures 
+                                (CBC, bone marrow biopsy, flow cytometry) by a qualified hematologist or oncologist. Do not make clinical decisions based solely on this tool.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div style="padding: 24px 30px; border-bottom: 1px solid #e2e8f0;">
+                <h2 style="margin: 0 0 16px; font-size: 20px; color: #1e293b;">🔗 Agentic AI Workflow</h2>
+                <p style="color: #475569; font-size: 14px; margin: 0 0 16px; line-height: 1.6;">
+                    Your image is processed through a <strong>3-step intelligent pipeline</strong> built with LangGraph. Each agent specializes in a specific task and passes its findings to the next:
+                </p>
+                
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <!-- Agent 1 -->
+                    <div style="flex: 1; min-width: 200px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; position: relative;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="background: #dc2626; color: white !important; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">1</div>
+                            <strong style="color: #1e293b; font-size: 14px;">🔬 Image Analyzer</strong>
+                        </div>
+                        <p style="margin: 0; color: #64748b; font-size: 13px; line-height: 1.5;">Fine-tuned <strong>MedGemma 1.5 4B</strong> with LoRA classifies cells as Normal or Leukemia.</p>
+                    </div>
+                    <!-- Agent 2 -->
+                    <div style="flex: 1; min-width: 200px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="background: #dc2626; color: white !important; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">2</div>
+                            <strong style="color: #1e293b; font-size: 14px;">🩺 Clinical Advisor</strong>
+                        </div>
+                        <p style="margin: 0; color: #64748b; font-size: 13px; line-height: 1.5;">If leukemia is detected, <strong>Gemini 3 Flash</strong> generates clinical advice and risk assessment.</p>
+                    </div>
+                    <!-- Agent 3 -->
+                    <div style="flex: 1; min-width: 200px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <div style="background: #dc2626; color: white !important; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">3</div>
+                            <strong style="color: #1e293b; font-size: 14px;">📋 Report Generator</strong>
+                        </div>
+                        <p style="margin: 0; color: #64748b; font-size: 13px; line-height: 1.5;">Compiles a structured HTML report with patient data, results, and downloadable PDF.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Requirements + Examples -->
+            <div style="padding: 24px 30px; border-bottom: 1px solid #e2e8f0;">
+                <h2 style="margin: 0 0 16px; font-size: 20px; color: #1e293b;">📷 Supported Image Types</h2>
+                <p style="color: #475569; font-size: 14px; margin: 0 0 16px; line-height: 1.6;">
+                    The model was trained on the <strong>ALL-IDB</strong> (Acute Lymphoblastic Leukemia Image Database). 
+                    For best results, upload images similar to the examples below:
                 </p>
             </div>
         </div>
         """)
         
+        # Example images using Gradio components
+        with gr.Row():
+            with gr.Column():
+                gr.HTML("""
+                <div class="ls-card" style="text-align:center; background:#f8fafc; border-radius:12px; padding:12px; color: #1e293b;">
+                    <p style="margin:0 0 4px; font-weight:600; color:#22c55e;">✅ Normal Blood Cell</p>
+                    <p style="margin:0; font-size:12px; color:#64748b;">Healthy lymphocyte — round, well-defined</p>
+                </div>
+                """)
+                gr.Image(
+                    value="examples/normal_cell.png",
+                    label="Normal Cell Example",
+                    show_label=False,
+                    height=220,
+                    interactive=False
+                )
+            with gr.Column():
+                gr.HTML("""
+                <div class="ls-card" style="text-align:center; background:#f8fafc; border-radius:12px; padding:12px; color: #1e293b;">
+                    <p style="margin:0 0 4px; font-weight:600; color:#ef4444;">⚠️ Leukemia Blast Cell</p>
+                    <p style="margin:0; font-size:12px; color:#64748b;">Abnormal blast — irregular, large nucleus</p>
+                </div>
+                """)
+                gr.Image(
+                    value="examples/leukemia_cell.png",
+                    label="Leukemia Cell Example",
+                    show_label=False,
+                    height=220,
+                    interactive=False
+                )
+        
+        gr.HTML("""
+        <div class="ls-card" style="background: #ffffff; border-radius: 12px; padding: 16px 30px; margin-top: 16px; margin-bottom: 16px; border: 1px solid #e2e8f0; color: #1e293b;">
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; font-size: 13px; color: #64748b;">
+                <span>✔️ <strong>Dark background</strong></span>
+                <span>✔️ <strong>Single cell crops</strong></span>
+                <span>✔️ <strong>Wright/Giemsa stain</strong></span>
+                <span>✔️ <strong>JPEG or PNG</strong></span>
+                <span>✔️ <strong>Clear, in-focus</strong></span>
+            </div>
+        </div>
+        """)
+        
         accept_btn = gr.Button(
-            "✅ I Understand & Accept — Proceed to App", 
+            "✅  I Understand & Accept — Proceed to App", 
             variant="primary", 
             size="lg"
         )
