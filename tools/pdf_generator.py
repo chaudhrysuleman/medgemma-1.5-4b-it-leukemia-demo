@@ -170,8 +170,8 @@ class LeukemiaReportPDF(FPDF):
     
     def _add_bullet_item(self, text: str):
         """Add a single bullet item"""
-        x = self.get_x()
-        self.set_x(x + 4)
+        # Use absolute indentation to avoid 'Not enough horizontal space' error
+        self.set_x(15)
         clean = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
         self.cell(5, 5, '-')
         self.multi_cell(0, 5, self._safe(clean[:300]))
@@ -179,8 +179,8 @@ class LeukemiaReportPDF(FPDF):
     
     def _add_numbered_item(self, number: str, text: str):
         """Add a numbered list item"""
-        x = self.get_x()
-        self.set_x(x + 4)
+        # Use absolute indentation
+        self.set_x(15)
         clean = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
         self.cell(8, 5, f"{number}.")
         self.multi_cell(0, 5, self._safe(clean[:300]))
