@@ -183,6 +183,7 @@ def start_new_analysis():
 
 custom_css = """
 .gradio-container { max-width: 1000px !important; }
+.gradio-container .gap { gap: 4px !important; }
 .step-header { 
     background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
     color: white;
@@ -426,6 +427,19 @@ with gr.Blocks(
                     gr.Markdown("### 📥 Download Report")
                     pdf_download = gr.File(label="PDF Report", interactive=False)
                     new_analysis_btn = gr.Button("🔄 New Analysis", variant="secondary", size="lg")
+        
+        # Footer (inside main_app so it hides with disclaimer)
+        gr.HTML("""
+        <div class="ls-footer" style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 10px; text-align: center;">
+            <p style="margin: 0; color: #64748b; font-size: 14px;">
+                Powered by <strong style="color: #64748b;">LangGraph</strong> Multi-Agent Workflow | 
+                Model: <code style="color: #3b82f6;">chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora</code>
+            </p>
+            <p style="margin: 10px 0 0 0; color: #94a3b8; font-size: 12px;">
+                Built for the MedGemma Impact Challenge 2026 | By Chaudhry Muhammad Suleman &amp; Muhammad Idnan
+            </p>
+        </div>
+        """)
     
     # ==================== Event Handlers ====================
     
@@ -437,19 +451,6 @@ with gr.Blocks(
     back_btn.click(go_back_to_step1, [], [step1, step2, step3])
     analyze_btn.click(analyze_image_workflow, [image_input], [step2, step3, status_msg, report_output, trace_output, pdf_download])
     new_analysis_btn.click(start_new_analysis, [], [step1, step2, step3, patient_name, patient_dob, patient_gender, image_input, report_output, trace_output, pdf_download])
-    
-    # Footer
-    gr.HTML("""
-    <div class="ls-footer" style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 10px; text-align: center;">
-        <p style="margin: 0; color: #64748b; font-size: 14px;">
-            Powered by <strong style="color: #64748b;">LangGraph</strong> Multi-Agent Workflow | 
-            Model: <code style="color: #3b82f6;">chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora</code>
-        </p>
-        <p style="margin: 10px 0 0 0; color: #94a3b8; font-size: 12px;">
-            Built for the MedGemma Impact Challenge 2026 | By Chaudhry Muhammad Suleman &amp; Muhammad Idnan
-        </p>
-    </div>
-    """)
 
 
 # Pre-load model at startup
