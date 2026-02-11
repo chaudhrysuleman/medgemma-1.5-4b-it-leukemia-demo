@@ -129,12 +129,16 @@ def generate_report(
             <td style="padding: 12px 0; text-align: right;"><code>chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora</code></td>
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 12px 0; color: #64748b;">Model Accuracy</td>
+            <td style="padding: 12px 0; color: #64748b;">Overall Accuracy</td>
             <td style="padding: 12px 0; text-align: right;"><strong>78.15%</strong></td>
         </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 12px 0; color: #64748b;">Leukemia Precision / Recall / F1</td>
+            <td style="padding: 12px 0; text-align: right;"><strong>83% / 83% / 83%</strong></td>
+        </tr>
         <tr>
-            <td style="padding: 12px 0; color: #64748b;">Leukemia Recall</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>83.10%</strong> (optimized for sensitivity)</td>
+            <td style="padding: 12px 0; color: #64748b;">Normal Precision / Recall / F1</td>
+            <td style="padding: 12px 0; text-align: right;"><strong>68% / 69% / 69%</strong></td>
         </tr>
     </table>
 </div>

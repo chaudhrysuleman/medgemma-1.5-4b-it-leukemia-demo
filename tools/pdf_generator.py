@@ -287,8 +287,9 @@ def generate_pdf_report(
         ("Model", "chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora"),
         ("Workflow Engine", "LangGraph Multi-Agent Pipeline"),
         ("Clinical Advisor", "Gemini 3 Flash Preview"),
-        ("Model Accuracy", "78.15%"),
-        ("Leukemia Recall", "83.10% (optimised for sensitivity)"),
+        ("Overall Accuracy", "78.15%"),
+        ("Leukemia Precision / Recall / F1", "83% / 83% / 83%"),
+        ("Normal Precision / Recall / F1", "68% / 69% / 69%"),
     ])
     
     pdf.add_divider()
