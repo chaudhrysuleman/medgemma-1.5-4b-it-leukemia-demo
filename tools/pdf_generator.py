@@ -311,7 +311,8 @@ def generate_pdf_report(
         pdf.add_divider()
     
     # ── Recommended Next Steps ──
-    if next_steps:
+    # Only show separate next steps if clinical advice didn't cover them (i.e. no clinical_advice provided)
+    elif next_steps:
         pdf.add_section_header("Recommended Next Steps")
         pdf.add_bullet_list(next_steps)
         pdf.add_divider()
