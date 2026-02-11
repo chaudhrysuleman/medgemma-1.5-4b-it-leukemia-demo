@@ -126,46 +126,47 @@ class LeukemiaReportPDF(FPDF):
         self.ln(3)
     
     def add_text_block(self, text: str):
-        """Add a block of text, handling markdown bold and newlines"""
-        self.set_font('Helvetica', '', 9)
-        self.set_text_color(51, 65, 85)
+        """Add a block of text, handling markdown headers, bold, and lists"""
+        # Split into lines to process headers correctly even without double newlines
+        lines = text.split('\n')
         
-        # Split into paragraphs
-        paragraphs = text.split('\n\n')
-        for para in paragraphs:
-            para = para.strip()
-            if not para:
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                self.ln(2)
                 continue
             
-            # Skip markdown headers (## ...) — we handle those as section headers
-            if para.startswith('#'):
+            # Handle headers (# or ##)
+            if stripped.startswith('#'):
                 # Render as bold sub-header
-                header_text = para.lstrip('#').strip()
+                header_text = stripped.lstrip('#').strip()
+                self.ln(2)
                 self.set_font('Helvetica', 'B', 10)
                 self.set_text_color(30, 41, 59)
                 self.multi_cell(0, 6, self._safe(header_text))
-                self.ln(2)
                 self.set_font('Helvetica', '', 9)
                 self.set_text_color(51, 65, 85)
                 continue
             
             # Handle bullet points
-            lines = para.split('\n')
-            for line in lines:
-                stripped = line.strip()
-                if stripped.startswith(('- ', '* ', '• ')):
-                    bullet_text = stripped.lstrip('-*• ').strip()
-                    self._add_bullet_item(bullet_text)
-                elif len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)':
-                    item_text = stripped.lstrip('0123456789.) ').strip()
-                    self._add_numbered_item(stripped[0], item_text)
-                elif stripped:
-                    # Clean markdown bold
-                    clean = re.sub(r'\*\*(.*?)\*\*', r'\1', stripped)
-                    self.multi_cell(0, 5, self._safe(clean))
-                    self.ln(1)
-        
-        self.ln(2)
+            if stripped.startswith(('- ', '* ', '• ')):
+                bullet_text = stripped.lstrip('-*• ').strip()
+                self._add_bullet_item(bullet_text)
+                continue
+            
+            # Handle numbered items
+            if len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)':
+                item_text = stripped.lstrip('0123456789.) ').strip()
+                self._add_numbered_item(stripped[0], item_text)
+                continue
+                
+            # Normal text line
+            self.set_font('Helvetica', '', 9)
+            self.set_text_color(51, 65, 85)
+            
+            # Clean markdown bold within line (e.g. **text**)
+            clean = re.sub(r'\*\*(.*?)\*\*', r'\1', stripped)
+            self.multi_cell(0, 5, self._safe(clean))
     
     def _add_bullet_item(self, text: str):
         """Add a single bullet item"""
