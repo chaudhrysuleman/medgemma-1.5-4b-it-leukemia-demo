@@ -192,79 +192,163 @@ custom_css = """
 }
 """
 
+
+def accept_disclaimer():
+    """Hide disclaimer and show the main app"""
+    return gr.update(visible=False), gr.update(visible=True)
+
+
 with gr.Blocks(
     title="LeukemiaScope - AI Blood Cell Analysis",
     theme=gr.themes.Soft(),
     css=custom_css
 ) as demo:
     
-    # Header
-    gr.HTML("""
-    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
-        <h1 style="margin: 0; font-size: 32px;">🩸 LeukemiaScope</h1>
-        <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
-    </div>
-    """)
-    
-    # Progress indicator
-    gr.HTML("""
-    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-        <div style="display: flex; align-items: center;">
-            <div style="width: 35px; height: 35px; border-radius: 50%; background: #dc2626; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
-            <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-            <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
-            <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
-            <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+    # ==================== DISCLAIMER POPUP ====================
+    with gr.Group(visible=True) as disclaimer_section:
+        gr.HTML("""
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 32px;">🩸 LeukemiaScope</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
         </div>
-    </div>
-    <div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px; font-size: 14px; color: #6b7280;">
-        <span>Patient Info</span>
-        <span>Image Upload</span>
-        <span>Report</span>
-    </div>
-    """)
-    
-    status_msg = gr.Markdown("")
-    
-    # Step 1: Patient Information
-    with gr.Group(visible=True) as step1:
-        gr.Markdown("## 📋 Step 1: Patient Information")
-        gr.Markdown("Please enter the patient details before proceeding with the analysis.")
+        """)
         
-        with gr.Row():
-            with gr.Column():
-                patient_name = gr.Textbox(label="Full Name *", placeholder="Enter patient's full name", max_lines=1)
-                patient_dob = gr.Textbox(label="Date of Birth", placeholder="YYYY-MM-DD", max_lines=1)
-                patient_gender = gr.Dropdown(label="Gender", choices=["Not specified", "Male", "Female", "Other"], value="Not specified")
+        gr.HTML("""
+        <div style="background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+            <h2 style="margin-top: 0; color: #dc2626; text-align: center;">⚠️ Important Disclaimer</h2>
+            <ul style="color: #7f1d1d; line-height: 2; font-size: 15px; padding-left: 20px;">
+                <li>This tool is for <strong>research and educational purposes only</strong></li>
+                <li>This is <strong>NOT a certified medical diagnostic tool</strong></li>
+                <li>Results must be confirmed by qualified healthcare professionals</li>
+                <li><strong>Do NOT</strong> make any treatment decisions based solely on this tool's output</li>
+                <li>Always consult a hematologist or oncologist for definitive diagnosis</li>
+            </ul>
+        </div>
+        """)
         
-        next_btn_1 = gr.Button("Continue to Image Upload →", variant="primary", size="lg")
-    
-    # Step 2: Image Upload
-    with gr.Group(visible=False) as step2:
-        gr.Markdown("## 📷 Step 2: Upload Blood Cell Image")
-        gr.Markdown("Upload a microscopy image of blood cells for analysis.")
+        gr.HTML("""
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+            <h2 style="margin-top: 0; color: #1e40af;">🤖 How This App Works</h2>
+            <p style="color: #1e3a5f; line-height: 1.6;">LeukemiaScope uses a <strong>multi-agent AI workflow</strong> powered by <strong>LangGraph</strong> to analyze blood cell images:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">1</div>
+                    <div style="color: #1e3a5f;"><strong>🔬 Image Analyzer Agent</strong> — Fine-tuned <code>MedGemma 1.5 4B</code> with LoRA adapter analyzes your blood cell microscopy image and classifies it as <strong>Normal</strong> or <strong>Leukemia</strong>.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">2</div>
+                    <div style="color: #1e3a5f;"><strong>🩺 Clinical Advisor Agent</strong> — If leukemia is detected, <code>Gemini 3 Flash Preview</code> provides clinical recommendations, next steps, and risk assessment.</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: #3b82f6; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;">3</div>
+                    <div style="color: #1e3a5f;"><strong>📋 Report Generator Agent</strong> — Generates a structured medical report with HTML view and downloadable PDF.</div>
+                </div>
+            </div>
+        </div>
+        """)
         
-        with gr.Row():
-            with gr.Column():
-                image_input = gr.Image(label="Blood Cell Image", type="pil", height=350)
-                with gr.Row():
-                    back_btn = gr.Button("← Back", size="lg")
-                    analyze_btn = gr.Button("🔬 Analyze Image", variant="primary", size="lg")
-    
-    # Step 3: Results
-    with gr.Group(visible=False) as step3:
-        gr.Markdown("## 📊 Step 3: Analysis Results")
+        gr.HTML("""
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+            <h2 style="margin-top: 0; color: #166534;">📷 Image Requirements</h2>
+            <p style="color: #14532d; line-height: 1.6;">For accurate results, please upload images that meet these criteria:</p>
+            <ul style="color: #14532d; line-height: 2; font-size: 15px; padding-left: 20px;">
+                <li><strong>Blood cell microscopy image</strong> — standard blood smear slides</li>
+                <li><strong>Dark/black background</strong> — single cell or few cells visible</li>
+                <li><strong>Stained samples preferred</strong> — Wright or Giemsa stain</li>
+                <li><strong>Clear, focused image</strong> — avoid blurry or low-resolution images</li>
+                <li><strong>RGB format</strong> — JPEG, PNG, or similar formats</li>
+            </ul>
+            <div style="background: #dcfce7; padding: 12px; border-radius: 8px; margin-top: 10px;">
+                <p style="margin: 0; color: #166534; font-size: 14px;">
+                    💡 <strong>Tip:</strong> The model was trained on ALL-IDB (Acute Lymphoblastic Leukemia Image Database) style images — 
+                    single blood cell crops with dark backgrounds work best.
+                </p>
+            </div>
+        </div>
+        """)
         
-        with gr.Row():
-            with gr.Column(scale=2):
-                report_output = gr.HTML(label="Medical Report")
-            with gr.Column(scale=1):
-                trace_output = gr.Markdown(label="Workflow Trace")
-                gr.Markdown("### 📥 Download Report")
-                pdf_download = gr.File(label="PDF Report", interactive=False)
-                new_analysis_btn = gr.Button("🔄 New Analysis", variant="secondary", size="lg")
+        accept_btn = gr.Button(
+            "✅ I Understand & Accept — Proceed to App", 
+            variant="primary", 
+            size="lg"
+        )
     
-    # Event handlers
+    # ==================== MAIN APP (hidden until disclaimer accepted) ====================
+    with gr.Group(visible=False) as main_app:
+        
+        # Header
+        gr.HTML("""
+        <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 32px;">🩸 LeukemiaScope</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">AI-Powered Blood Cell Analysis with Multi-Agent Workflow</p>
+        </div>
+        """)
+        
+        # Progress indicator
+        gr.HTML("""
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center;">
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #dc2626; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                <div style="width: 80px; height: 3px; background: #e5e7eb;"></div>
+                <div style="width: 35px; height: 35px; border-radius: 50%; background: #e5e7eb; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 50px; margin-bottom: 30px; font-size: 14px; color: #6b7280;">
+            <span>Patient Info</span>
+            <span>Image Upload</span>
+            <span>Report</span>
+        </div>
+        """)
+        
+        status_msg = gr.Markdown("")
+        
+        # Step 1: Patient Information
+        with gr.Group(visible=True) as step1:
+            gr.Markdown("## 📋 Step 1: Patient Information")
+            gr.Markdown("Please enter the patient details before proceeding with the analysis.")
+            
+            with gr.Row():
+                with gr.Column():
+                    patient_name = gr.Textbox(label="Full Name *", placeholder="Enter patient's full name", max_lines=1)
+                    patient_dob = gr.Textbox(label="Date of Birth", placeholder="YYYY-MM-DD", max_lines=1)
+                    patient_gender = gr.Dropdown(label="Gender", choices=["Not specified", "Male", "Female", "Other"], value="Not specified")
+            
+            next_btn_1 = gr.Button("Continue to Image Upload →", variant="primary", size="lg")
+        
+        # Step 2: Image Upload
+        with gr.Group(visible=False) as step2:
+            gr.Markdown("## 📷 Step 2: Upload Blood Cell Image")
+            gr.Markdown("Upload a microscopy image of blood cells for analysis.")
+            
+            with gr.Row():
+                with gr.Column():
+                    image_input = gr.Image(label="Blood Cell Image", type="pil", height=350)
+                    with gr.Row():
+                        back_btn = gr.Button("← Back", size="lg")
+                        analyze_btn = gr.Button("🔬 Analyze Image", variant="primary", size="lg")
+        
+        # Step 3: Results
+        with gr.Group(visible=False) as step3:
+            gr.Markdown("## 📊 Step 3: Analysis Results")
+            
+            with gr.Row():
+                with gr.Column(scale=2):
+                    report_output = gr.HTML(label="Medical Report")
+                with gr.Column(scale=1):
+                    trace_output = gr.Markdown(label="Workflow Trace")
+                    gr.Markdown("### 📥 Download Report")
+                    pdf_download = gr.File(label="PDF Report", interactive=False)
+                    new_analysis_btn = gr.Button("🔄 New Analysis", variant="secondary", size="lg")
+    
+    # ==================== Event Handlers ====================
+    
+    # Disclaimer accept
+    accept_btn.click(accept_disclaimer, [], [disclaimer_section, main_app])
+    
+    # Step 1 -> Step 2
     next_btn_1.click(save_patient_info, [patient_name, patient_dob, patient_gender], [step1, step2, step3, status_msg])
     back_btn.click(go_back_to_step1, [], [step1, step2, step3])
     analyze_btn.click(analyze_image_workflow, [image_input], [step2, step3, status_msg, report_output, trace_output, pdf_download])
