@@ -76,7 +76,7 @@ def generate_report(
 <div class="ls-card" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; color: #1e293b;">
 
 <!-- Header -->
-<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; border-radius: 12px 12px 0 0;">
+<div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; border-radius: 12px 12px 0 0;">
     <h1 style="margin: 0; font-size: 28px;">🩸 LeukemiaScope</h1>
     <p style="margin: 5px 0 0 0; opacity: 0.9;">AI Blood Cell Analysis Report</p>
 </div>
@@ -177,17 +177,17 @@ def generate_report(
                     advice_html_parts.append('</ul>')
                     in_list = False
                 header = stripped.lstrip('#').strip()
-                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #991b1b; font-size: 15px;">{header}</h4>')
+                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #1e40af; font-size: 15px;">{header}</h4>')
             elif stripped.startswith('# '):
                 if in_list:
                     advice_html_parts.append('</ul>')
                     in_list = False
                 header = stripped.lstrip('#').strip()
-                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #991b1b; font-size: 16px; font-weight: 700;">{header}</h4>')
+                advice_html_parts.append(f'<h4 style="margin: 16px 0 8px; color: #1e293b; font-size: 16px; font-weight: 700;">{header}</h4>')
             # Bullets
             elif stripped.startswith(('- ', '* ', '• ')):
                 if not in_list:
-                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #7f1d1d; line-height: 1.8;">')
+                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #334155; line-height: 1.8;">')
                     in_list = True
                 item = stripped.lstrip('-*• ').strip()
                 # Bold
@@ -196,7 +196,7 @@ def generate_report(
             # Numbered items
             elif len(stripped) > 2 and stripped[0].isdigit() and stripped[1] in '.)':
                 if not in_list:
-                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #7f1d1d; line-height: 1.8; list-style-type: decimal;">')
+                    advice_html_parts.append('<ul style="margin: 4px 0; padding-left: 20px; color: #334155; line-height: 1.8; list-style-type: decimal;">')
                     in_list = True
                 item = stripped.lstrip('0123456789.) ').strip()
                 item = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', item)
@@ -207,16 +207,16 @@ def generate_report(
                     in_list = False
                 # Bold
                 text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', stripped)
-                advice_html_parts.append(f'<p style="color: #7f1d1d; line-height: 1.6; margin: 4px 0;">{text}</p>')
+                advice_html_parts.append(f'<p style="color: #334155; line-height: 1.6; margin: 4px 0;">{text}</p>')
         
         if in_list:
             advice_html_parts.append('</ul>')
         
         advice_html = '\n'.join(advice_html_parts)
         
-        advice_border = "#fecaca" if classification == "Leukemia" else "#bbf7d0"
-        advice_bg = "#fef2f2" if classification == "Leukemia" else "#f0fdf4"
-        advice_title_color = "#dc2626" if classification == "Leukemia" else "#166534"
+        advice_border = "#e2e8f0"
+        advice_bg = "#f8fafc"
+        advice_title_color = "#1e293b"
         
         report += f"""
 <!-- Clinical Recommendations -->
