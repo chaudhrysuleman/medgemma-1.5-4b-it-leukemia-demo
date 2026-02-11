@@ -46,16 +46,10 @@ class LeukemiaReportPDF(FPDF):
         self.cell(0, 5, 'MedGemma Impact Challenge 2026 | By Chaudhry Muhammad Suleman & Muhammad Idnan', align='C')
     
     def add_section_header(self, title: str, icon: str = ""):
-        """Add a professional section header with accent bar"""
+        """Add a professional section header"""
         self.ln(4)
-        # Blue accent bar
-        y = self.get_y()
-        self.set_fill_color(59, 130, 246)
-        self.rect(10, y, 3, 8, style='F')
-        
         self.set_font('Helvetica', 'B', 13)
         self.set_text_color(30, 41, 59)
-        self.set_x(16)
         display_title = f"{icon}  {title}" if icon else title
         self.cell(0, 8, self._safe(display_title), new_x='LMARGIN', new_y='NEXT')
         self.ln(2)
