@@ -270,6 +270,26 @@ custom_css = """
 }
 """
 
+custom_css += """
+/* Spinner animation */
+@keyframes ls-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes ls-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.ls-spinner {
+    width: 48px; height: 48px;
+    border: 4px solid rgba(220,38,38,0.2);
+    border-top-color: #dc2626;
+    border-radius: 50%;
+    animation: ls-spin 1s linear infinite;
+}
+.ls-pulse { animation: ls-pulse 2s ease-in-out infinite; }
+"""
+
 
 def accept_disclaimer():
     """Hide disclaimer and show the main app"""
@@ -447,6 +467,30 @@ with gr.Blocks(
                         back_btn = gr.Button("← Back", size="lg")
                         analyze_btn = gr.Button("🔬 Analyze Image", variant="primary", size="lg")
         
+        # Processing overlay (hidden by default)
+        with gr.Group(visible=False) as processing_overlay:
+            gr.HTML("""
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="display: inline-block; width: 48px; height: 48px; border: 4px solid rgba(220,38,38,0.2); border-top-color: #dc2626; border-radius: 50%; animation: ls-spin 1s linear infinite;"></div>
+                <h3 style="margin: 20px 0 8px; color: #1e293b; font-size: 20px;">🔬 Analyzing Blood Cell Image...</h3>
+                <p style="color: #64748b; font-size: 14px; margin: 0 0 20px;">Multi-agent workflow in progress. This may take 15–30 seconds.</p>
+                <div style="display: flex; flex-direction: column; gap: 8px; max-width: 360px; margin: 0 auto; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: #fef2f2; border-radius: 8px; animation: ls-pulse 2s ease-in-out infinite;">
+                        <span style="font-size: 16px;">🔬</span>
+                        <span style="color: #991b1b; font-size: 13px; font-weight: 500;">Agent 1: Image Analyzer running MedGemma...</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: #f8fafc; border-radius: 8px; opacity: 0.5;">
+                        <span style="font-size: 16px;">🩺</span>
+                        <span style="color: #64748b; font-size: 13px;">Agent 2: Clinical Advisor (pending)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: #f8fafc; border-radius: 8px; opacity: 0.5;">
+                        <span style="font-size: 16px;">📋</span>
+                        <span style="color: #64748b; font-size: 13px;">Agent 3: Report Generator (pending)</span>
+                    </div>
+                </div>
+            </div>
+            """)
+        
         # Step 3: Results
         with gr.Group(visible=False) as step3:
             gr.Markdown("## 📊 Step 3: Analysis Results")
@@ -481,7 +525,31 @@ with gr.Blocks(
     # Step 1 -> Step 2
     next_btn_1.click(save_patient_info, [patient_name, patient_dob, patient_gender], [step1, step2, step3, status_msg, progress_bar])
     back_btn.click(go_back_to_step1, [], [step1, step2, step3, progress_bar])
-    analyze_btn.click(analyze_image_workflow, [image_input], [step2, step3, status_msg, report_output, trace_output, pdf_download, progress_bar])
+    # Analyze: chain events — show overlay first, then run analysis
+    def show_processing():
+        return gr.update(visible=False), gr.update(visible=True), get_progress_html(2)
+    
+    def run_and_finish(image):
+        # Run the actual analysis
+        result = analyze_image_workflow(image)
+        # result is (step2_vis, step3_vis, status, report, trace, pdf, progress)
+        # We also need to hide the processing overlay
+        return (
+            result[0],   # step2
+            result[1],   # step3
+            gr.update(visible=False),  # hide processing overlay
+            result[2],   # status_msg
+            result[3],   # report_output
+            result[4],   # trace_output
+            result[5],   # pdf_download
+            result[6],   # progress_bar
+        )
+    
+    analyze_btn.click(
+        show_processing, [], [step2, processing_overlay, progress_bar]
+    ).then(
+        run_and_finish, [image_input], [step2, step3, processing_overlay, status_msg, report_output, trace_output, pdf_download, progress_bar]
+    )
     new_analysis_btn.click(start_new_analysis, [], [step1, step2, step3, patient_name, patient_dob, patient_gender, image_input, report_output, trace_output, pdf_download, progress_bar])
 
 
