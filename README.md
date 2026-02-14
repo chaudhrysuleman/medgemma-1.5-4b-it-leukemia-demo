@@ -133,16 +133,17 @@ The multi-agent workflow is orchestrated by [LangGraph](https://langchain-ai.git
 ## 📂 Project Structure
 
 ```
-Agentic/
-├── app_agentic.py              # Main app — Gradio UI + orchestration
+Leukemia-AI/
+├── app.py                      # Main Gradio UI + orchestration
 ├── requirements.txt            # Python dependencies
-├── .env                        # API keys (HF_TOKEN, GOOGLE_API_KEY)
+├── .env-example                # Example environment variables
+├── README.md                   # Documentation
 │
 ├── agents/                     # Agent definitions
 │   ├── __init__.py
 │   ├── image_analyzer.py       # MedGemma-based blood cell classifier
 │   ├── clinical_advisor.py     # Gemini-powered clinical recommendations
-│   └── report_generator.py     # HTML/PDF medical report builder
+│   └── report_generator.py     # HTML medical report builder
 │
 ├── graph/                      # LangGraph workflow
 │   ├── __init__.py
@@ -153,7 +154,9 @@ Agentic/
 │   ├── medgemma_predictor.py   # MedGemma model loading + inference
 │   └── pdf_generator.py        # PDF report generation (fpdf2)
 │
-└── LeukemiaScope_Agentic_Colab.ipynb  # Google Colab notebook (GPU)
+└── examples/                   # Sample images for testing
+    ├── normal_cell.png
+    └── leukemia_cell.png
 ```
 
 ---
