@@ -196,6 +196,38 @@ Agentic/
 - [HuggingFace Token](https://huggingface.co/settings/tokens) (with access to MedGemma)
 - [Google AI API Key](https://aistudio.google.com/apikey) (for Clinical Advisor)
 
+### Run Locally
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/chaudhrysuleman/medgemma-1.5-4b-it-leukemia-demo.git
+   cd medgemma-1.5-4b-it-leukemia-demo
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure environment variables**
+   
+   Copy the example file and add your API keys:
+   ```bash
+   cp .env-example .env
+   ```
+   Then edit `.env` and set your keys:
+   ```
+   HF_TOKEN=your_huggingface_token
+   GOOGLE_API_KEY=your_google_api_key
+   ```
+
+4. **Run the app**
+   ```bash
+   python app.py
+   ```
+
+> **Note:** For HuggingFace Spaces deployment, set `HF_TOKEN` and `GOOGLE_API_KEY` in Space Secrets instead of using a `.env` file.
+
 ---
 
 ## 🖥️ User Flow
@@ -237,6 +269,3 @@ Agentic/
 
 Built for the **MedGemma Impact Challenge 2026** 🏆
 
-
-## Setup
-Set `HF_TOKEN` and `GOOGLE_API_KEY` in Space Secrets.
