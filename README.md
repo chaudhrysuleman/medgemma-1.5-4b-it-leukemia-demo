@@ -169,8 +169,10 @@ Leukemia-AI/
 | **Model** | `google/medgemma-1.5-4b-it` (base) |
 | **Adapter** | `chaudhrysuleman/medgemma-1.5-4b-it-leukemia-lora` |
 | **Task** | Binary classification (Normal / Leukemia) |
-| **Accuracy** | 78.15% |
-| **Leukemia Recall** | 83.10% (optimized for sensitivity) |
+| **Accuracy** | 77.66% |
+| **Precision** | 84.16% |
+| **Recall (Leukemia)** | 81.05% (optimized for sensitivity) |
+| **F1-Score** | 82.57% |
 | **Input** | Blood cell microscopy image (RGB) |
 | **Output** | Classification, confidence score, raw response |
 

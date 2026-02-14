@@ -130,15 +130,15 @@ def generate_report(
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
             <td style="padding: 12px 0; color: #64748b;">Overall Accuracy</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>78.15%</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><strong>77.66%</strong></td>
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 12px 0; color: #64748b;">Leukemia Precision / Recall / F1</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>83%</strong></td>
+            <td style="padding: 12px 0; color: #64748b;">Leukemia F1-Score</td>
+            <td style="padding: 12px 0; text-align: right;"><strong>82.57%</strong></td>
         </tr>
         <tr>
-            <td style="padding: 12px 0; color: #64748b;">Normal Precision / Recall / F1</td>
-            <td style="padding: 12px 0; text-align: right;"><strong>68%</strong></td>
+            <td style="padding: 12px 0; color: #64748b;">Normal Specificity</td>
+            <td style="padding: 12px 0; text-align: right;"><strong>71.30%</strong></td>
         </tr>
     </table>
 </div>
