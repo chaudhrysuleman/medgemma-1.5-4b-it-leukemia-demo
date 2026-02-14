@@ -53,7 +53,7 @@ LeukemiaScope is an AI-powered medical screening tool that uses a **multi-agent 
 │  ┌─────────────────────┐  ┌────────────────────────────────────────┐ │
 │  │   Tools / Utilities │  │         External Services              │ │
 │  │  • MedGemma Predict │  │  • HuggingFace Hub (model weights)    │ │
-│  │  • PDF Generator    │  │  • Google AI (Gemini 3 Flash Preview)       │ │
+│  │  • PDF Generator    │  │  • Google AI (Gemini 3 Flash Preview)  │ │
 │  └─────────────────────┘  └────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -91,17 +91,17 @@ The multi-agent workflow is orchestrated by [LangGraph](https://langchain-ai.git
                Yes ◀───┘             └───▶ No
                        │                    │
                        ▼                    │
-              ┌────────────────────┐        │
-              │ 🩺 Clinical Advisor│        │
-              │                    │        │
-              │  Gemini 3 Flash Preview  │        │
-              │  + Knowledge Base  │        │
-              │                    │        │
-              │  Output:           │        │
-              │  • Recommendations │        │
-              │  • Next Steps      │        │
-              │  • Severity Level  │        │
-              └────────┬───────────┘        │
+               ┌──────────────────────────┐   │
+               │ 🩺 Clinical Advisor       │   │
+               │                           │   │
+               │  Gemini 3 Flash Preview   │   │
+               │  + Knowledge Base         │   │
+               │                           │   │
+               │  Output:                  │   │
+               │  • Recommendations        │   │
+               │  • Next Steps             │   │
+               │  • Severity Level         │   │
+               └────────────┬──────────────┘   │
                        │                    │
                        ▼                    ▼
                     ┌────────────────────────┐
@@ -187,7 +187,7 @@ Leukemia-AI/
 | Property | Value |
 |----------|-------|
 | **Format** | Styled HTML report + downloadable PDF |
-| **Content** | Patient info, classification, clinical advice, next steps, disclaimer |
+| **Content** | Patient info, classification, clinical advice, disclaimer |
 | **PDF Engine** | fpdf2 |
 
 ---
@@ -253,7 +253,7 @@ Leukemia-AI/
 | **Vision Model** | MedGemma 1.5 4B-IT + LoRA |
 | **Clinical LLM** | Gemini 3 Flash Preview |
 | **LLM Integration** | LangChain + LangChain-Google-GenAI |
-| **Web Interface** | Gradio 4.x |
+| **Web Interface** | Gradio 5.x |
 | **PDF Generation** | fpdf2 |
 | **Model Serving** | HuggingFace Transformers + PEFT |
 
